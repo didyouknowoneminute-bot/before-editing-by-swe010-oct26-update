@@ -177,6 +177,11 @@ def count_paragraphs(text):
     return paragraphs
 
 
+def make_output_basename(uploaded_name):
+    original_name = os.path.splitext(os.path.basename(uploaded_name))[0]
+    return f"BE_{original_name[:20].replace(' ', '_')}"
+
+
 # ─────────────────────────────────────────────
 # TTS Generation
 # ─────────────────────────────────────────────
@@ -730,6 +735,7 @@ def main():
             "final_pitch": final_pitch,
 
         }
+        st.session_state.output_basename = make_output_basename(video_file.name)
 
         # Setup temp directories
         temp_dir = "temp_processing"
@@ -867,18 +873,7 @@ def main():
 
     # Show download buttons even after rerun (outside the processing block)
     if st.session_state.get("output_video") and os.path.exists(st.session_state.get("output_video", "")):
-        # Custom filename input
-        custom_label = "📁 Custom Filename" if not is_en else "📁 Custom Filename"
-        custom_input_label = "Enter filename (without extension)" if is_en else "ဖိုင်အမည် ထည့်ပါ (extension မပါ)"
-        st.markdown(f"**{custom_label}**")
-        custom_name = st.text_input(
-            custom_input_label,
-            value=st.session_state.get("custom_filename", "final_output"),
-            key="custom_filename"
-        )
-        if not custom_name:
-            custom_name = "final_output"
-        custom_name = custom_name.replace(" ", "_")
+        output_basename = st.session_state.get("output_basename", "BE_output")
 
         # Read bytes from session_state (stored once after processing)
         video_data = st.session_state.get("video_bytes")
@@ -890,7 +885,7 @@ def main():
                 st.download_button(
                     "📥 Download Video" if is_en else "📥 Download Video",
                     data=video_data,
-                    file_name=f"{custom_name}.mp4",
+                    file_name=f"{output_basename}.mp4",
                     mime="video/mp4"
                 )
         with col_s:
@@ -898,7 +893,7 @@ def main():
                 st.download_button(
                     "📝 Download SRT" if is_en else "📝 Download SRT",
                     data=srt_data,
-                    file_name=f"{custom_name}.srt",
+                    file_name=f"{output_basename}.srt",
                     mime="text/plain"
                 )
 
