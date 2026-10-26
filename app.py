@@ -5,21 +5,11 @@ import math
 import concurrent.futures
 import asyncio
 import edge_tts
-import edge_tts.communicate as edge_tts_communicate
-from edge_tts.constants import TRUSTED_CLIENT_TOKEN
 import time
 import shutil
 import gc
 import threading
 import base64
-
-
-edge_tts_communicate.WSS_URL = (
-    "wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1"
-    f"?Ocp-Apim-Subscription-Key={TRUSTED_CLIENT_TOKEN}"
-)
-
-
 # ─────────────────────────────────────────────
 # Timer Utility
 # ─────────────────────────────────────────────
